@@ -41,3 +41,4 @@ document.getElementById("newQuote").addEventListener("click", showRandomQuote);
 
 // Initial quote display on page load
 window.onload = showRandomQuote;
+showRandomQuote(); // Show the newly added quote immediately
