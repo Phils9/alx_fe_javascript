@@ -1,0 +1,28 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+
+#quoteDisplay {
+  font-size: 1.5em;
+  margin: 20px auto;
+  width: 60%;
+  padding: 10px;
+  border: 1px solid #a8a8a8;
+  border-radius: 5px;
+  background-color: rgba(0, 0, 120, 0.1);
+}
+
+button {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
