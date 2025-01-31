@@ -1,8 +1,9 @@
+// Fetch Quotes from JSONPlaceholder and Store in Local Storage
 async function fetchQuotesFromServer() {
   try {
       const response = await fetch("https://api.quotable.io/quotes?limit=10", {
           headers: {
-              "Content-Type": "application/json; charset=utf-8"  // Add Content-Type here
+              "Content-Type": "application/json; charset=UTF-8"
           }
       }); 
       const data = await response.json();
@@ -15,6 +16,7 @@ async function fetchQuotesFromServer() {
 
       localStorage.setItem("quotes", JSON.stringify(serverQuotes));
       console.log("Quotes fetched from real API.");
+      checkForConflicts(serverQuotes); // Check for conflicts when new quotes are fetched
   } catch (error) {
       console.error("Error fetching quotes:", error);
   }
@@ -91,28 +93,29 @@ function addQuote() {
   alert("Quote added!");
 }
 
-// Check for Data Conflicts (Basic Version)
-async function checkForUpdates() {
+// Check for Data Conflicts
+function checkForConflicts(serverQuotes) {
   const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+  const conflictNotifications = document.getElementById("conflictNotifications");
 
-  try {
-      const response = await fetch("https://jsonplaceholder.typicode.com/posts");
-      const serverQuotes = await response.json();
-
-      if (localQuotes.length !== serverQuotes.length) {
-          console.warn("Potential conflict detected. Data may be outdated.");
-          alert("Warning: There may be new quotes available. Refresh to get updates.");
-      }
-  } catch (error) {
-      console.error("Error checking for updates:", error);
+  // Detect conflicts between local and server quotes
+  if (localQuotes.length !== serverQuotes.length) {
+      console.warn("Potential conflict detected. Data may be outdated.");
+      conflictNotifications.innerHTML = "Warning: There may be new quotes available. Refresh to get updates.";
+  } else {
+      // If no conflict, sync data from the server
+      localStorage.setItem("quotes", JSON.stringify(serverQuotes));
+      console.log("Local storage updated with server data.");
   }
 }
+
+// Periodically Check for Updates (Every 60 Seconds)
+setInterval(() => {
+  fetchQuotesFromServer().then(loadQuotes); // Fetch and load quotes every 60 seconds
+}, 60000);
 
 // Event Listeners
 document.getElementById("newQuote").addEventListener("click", loadQuotes);
 
 // Initialize on Page Load
 fetchQuotesFromServer().then(loadQuotes);
-
-// Periodically Check for Updates (Every 60 Seconds)
-setInterval(checkForUpdates, 60000);
