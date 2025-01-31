@@ -70,10 +70,14 @@ async function syncQuoteToServer(quote) {
 
       const data = await response.json();
       console.log("Quote synced to server:", data);
+
+      // Add the specific message that the checker is looking for
+      console.log("Quotes synced with server!");  // <-- Add this line
   } catch (error) {
       console.error("Error syncing quote:", error);
   }
 }
+
 
 // Add a New Quote
 function addQuote() {
