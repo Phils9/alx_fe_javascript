@@ -14,12 +14,28 @@ async function fetchQuotesFromServer() {
           category: quote.tags[0] || "General"
       }));
 
-      localStorage.setItem("quotes", JSON.stringify(serverQuotes));
+      // Sync quotes to local storage after fetching from the server
+      syncQuotes(serverQuotes); // Call syncQuotes here
       console.log("Quotes fetched from real API.");
-      checkForConflicts(serverQuotes); // Check for conflicts when new quotes are fetched
   } catch (error) {
       console.error("Error fetching quotes:", error);
   }
+}
+
+// Sync Quotes - Update Local Storage with Server Data and Handle Conflicts
+function syncQuotes(serverQuotes) {
+  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+
+  // Check for conflicts (you can improve the conflict resolution logic here)
+  if (localQuotes.length !== serverQuotes.length) {
+      console.warn("Potential conflict detected. Data may be outdated.");
+      alert("Warning: There may be new quotes available. Refresh to get updates.");
+  } else {
+      // No conflict, sync data from the server to local storage
+      localStorage.setItem("quotes", JSON.stringify(serverQuotes));
+      console.log("Local storage updated with server data.");
+  }
+  loadQuotes(); // Load the updated quotes after syncing
 }
 
 // Load Quotes from Local Storage
@@ -93,29 +109,13 @@ function addQuote() {
   alert("Quote added!");
 }
 
-// Check for Data Conflicts
-function checkForConflicts(serverQuotes) {
-  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
-  const conflictNotifications = document.getElementById("conflictNotifications");
-
-  // Detect conflicts between local and server quotes
-  if (localQuotes.length !== serverQuotes.length) {
-      console.warn("Potential conflict detected. Data may be outdated.");
-      conflictNotifications.innerHTML = "Warning: There may be new quotes available. Refresh to get updates.";
-  } else {
-      // If no conflict, sync data from the server
-      localStorage.setItem("quotes", JSON.stringify(serverQuotes));
-      console.log("Local storage updated with server data.");
-  }
-}
-
 // Periodically Check for Updates (Every 60 Seconds)
 setInterval(() => {
-  fetchQuotesFromServer().then(loadQuotes); // Fetch and load quotes every 60 seconds
+  fetchQuotesFromServer(); // Fetch and sync quotes every 60 seconds
 }, 60000);
 
 // Event Listeners
 document.getElementById("newQuote").addEventListener("click", loadQuotes);
 
 // Initialize on Page Load
-fetchQuotesFromServer().then(loadQuotes);
+fetchQuotesFromServer();
