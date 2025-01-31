@@ -1,7 +1,10 @@
-// Fetch Quotes from JSONPlaceholder and Store in Local Storage
 async function fetchQuotesFromServer() {
   try {
-      const response = await fetch("https://api.quotable.io/quotes?limit=10"); 
+      const response = await fetch("https://api.quotable.io/quotes?limit=10", {
+          headers: {
+              "Content-Type": "application/json; charset=utf-8"  // Add Content-Type here
+          }
+      }); 
       const data = await response.json();
 
       const serverQuotes = data.results.map(quote => ({
@@ -16,7 +19,6 @@ async function fetchQuotesFromServer() {
       console.error("Error fetching quotes:", error);
   }
 }
-
 
 // Load Quotes from Local Storage
 function loadQuotes() {
